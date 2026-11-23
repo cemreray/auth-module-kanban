@@ -5,14 +5,20 @@ const bcrypt = require("bcrypt");
 const cors = require("cors");
 const path = require("path");
 
+// ==========================================
+// 1. SUNUCU AYARLARI
+// ==========================================
+
 const app = express();
 const PORT = 3000;
 
-// Geliştirme ortamı için
 app.use(cors());
 app.use(express.json({ limit: "10kb" }));
 
-// Veritabanını oluştur
+// ==========================================
+// 2. VERITABANI BAGLANTISI
+// ==========================================
+
 const db = new Database(path.join(__dirname, "users.db"));
 
 db.pragma("journal_mode = WAL");
@@ -27,19 +33,27 @@ db.exec(`
   )
 `);
 
-// API sağlık kontrolü
+// ==========================================
+// 3. API SAGLIK KONTROLU
+// ==========================================
+
 app.get("/api/health", (req, res) => {
-  res.json({
+  return res.status(200).json({
     success: true,
     message: "AuthSpace API çalışıyor."
   });
 });
 
-// KAN-6: Kullanıcı kayıt API
+// ==========================================
+// 4. KAN-6: KULLANICI KAYIT API
+// POST /api/auth/register
+// ==========================================
+
 app.post("/api/auth/register", async (req, res) => {
   try {
     const { fullName, email, password } = req.body || {};
 
+    // Zorunlu alan kontrolü
     if (
       typeof fullName !== "string" ||
       typeof email !== "string" ||
@@ -54,6 +68,7 @@ app.post("/api/auth/register", async (req, res) => {
     const name = fullName.trim();
     const normalizedEmail = email.trim().toLowerCase();
 
+    // Ad soyad kontrolü
     if (name.length < 2 || name.length > 100) {
       return res.status(400).json({
         success: false,
@@ -61,6 +76,7 @@ app.post("/api/auth/register", async (req, res) => {
       });
     }
 
+    // E-posta kontrolü
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (
@@ -73,6 +89,7 @@ app.post("/api/auth/register", async (req, res) => {
       });
     }
 
+    // Şifre güvenliği kontrolü
     const validPassword =
       password.length >= 8 &&
       password.length <= 72 &&
@@ -84,10 +101,12 @@ app.post("/api/auth/register", async (req, res) => {
     if (!validPassword) {
       return res.status(400).json({
         success: false,
-        message: "Şifre 8-72 karakter olmalı; büyük harf, küçük harf, sayı ve sembol içermelidir."
+        message:
+          "Şifre 8-72 karakter olmalı; büyük harf, küçük harf, sayı ve sembol içermelidir."
       });
     }
 
+    // Aynı e-posta ile kayıt var mı?
     const existingUser = db
       .prepare("SELECT id FROM users WHERE email = ?")
       .get(normalizedEmail);
@@ -99,8 +118,10 @@ app.post("/api/auth/register", async (req, res) => {
       });
     }
 
+    // Şifreyi hashle
     const passwordHash = await bcrypt.hash(password, 12);
 
+    // Kullanıcıyı veritabanına kaydet
     const result = db.prepare(`
       INSERT INTO users (full_name, email, password_hash)
       VALUES (?, ?, ?)
@@ -110,7 +131,7 @@ app.post("/api/auth/register", async (req, res) => {
       success: true,
       message: "Kullanıcı başarıyla kaydedildi.",
       user: {
-        id: result.lastInsertRowid.toString(),
+        id: String(result.lastInsertRowid),
         fullName: name,
         email: normalizedEmail
       }
@@ -124,7 +145,7 @@ app.post("/api/auth/register", async (req, res) => {
       });
     }
 
-    console.error("Kayıt sırasında sunucu hatası:", error.message);
+    console.error("Register API hatası:", error.message);
 
     return res.status(500).json({
       success: false,
@@ -132,6 +153,83 @@ app.post("/api/auth/register", async (req, res) => {
     });
   }
 });
+
+// ==========================================
+// 5. KAN-7: KULLANICI GIRIS (LOGIN) API
+// POST /api/auth/login
+// ==========================================
+
+app.post("/api/auth/login", async (req, res) => {
+  try {
+    const { email, password } = req.body || {};
+
+    // E-posta ve şifre kontrolü
+    if (
+      typeof email !== "string" ||
+      typeof password !== "string" ||
+      !email.trim() ||
+      !password
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "E-posta ve şifre alanları zorunludur."
+      });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    // Kullanıcıyı veritabanında ara
+    const user = db.prepare(`
+      SELECT id, full_name, email, password_hash
+      FROM users
+      WHERE email = ?
+    `).get(normalizedEmail);
+
+    // Kullanıcı bulunamadıysa
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "E-posta veya şifre hatalı."
+      });
+    }
+
+    // Şifreyi bcrypt ile karşılaştır
+    const passwordMatches = await bcrypt.compare(
+      password,
+      user.password_hash
+    );
+
+    if (!passwordMatches) {
+      return res.status(401).json({
+        success: false,
+        message: "E-posta veya şifre hatalı."
+      });
+    }
+
+    // Başarılı giriş
+    return res.status(200).json({
+      success: true,
+      message: "Giriş başarılı.",
+      user: {
+        id: String(user.id),
+        fullName: user.full_name,
+        email: user.email
+      }
+    });
+
+  } catch (error) {
+    console.error("Login API hatası:", error.message);
+
+    return res.status(500).json({
+      success: false,
+      message: "Giriş işlemi gerçekleştirilemedi."
+    });
+  }
+});
+
+// ==========================================
+// 6. SUNUCUYU BASLAT
+// ==========================================
 
 app.listen(PORT, () => {
   console.log(`AuthSpace API: http://localhost:${PORT}`);
