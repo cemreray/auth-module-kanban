@@ -1,0 +1,248 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuthSpace | Giriş Yap</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #182038;
+      --muted: #69748b;
+      --border: #dce2ee;
+      --primary: #6758e8;
+    }
+    body.dark {
+      --bg: #1a1e30;
+      --text: #f4f5ff;
+      --muted: #a1aac1;
+      --border: #343a50;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+    .layout {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .hero {
+      padding: 65px;
+      color: white;
+      background: linear-gradient(145deg, #302275, #6652da, #a264cf);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+    .logo { font-size: 23px; font-weight: 800; }
+    .hero h1 {
+      font-size: clamp(36px, 4vw, 62px);
+      line-height: 1.12;
+      letter-spacing: -2px;
+    }
+    .hero p { line-height: 1.8; color: #e5ddff; }
+    .orb {
+      width: 300px;
+      height: 300px;
+      position: absolute;
+      bottom: 10%;
+      right: -100px;
+      border: 1px solid #ffffff65;
+      border-radius: 50%;
+      box-shadow: 0 0 0 50px #ffffff0c, 0 0 0 100px #ffffff0a;
+      pointer-events: none;
+    }
+    .form-side {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 35px;
+    }
+    .form-wrap { width: 100%; max-width: 410px; }
+    .top-actions { display: flex; justify-content: flex-end; }
+    .theme-btn {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    h2 { font-size: 34px; margin: 25px 0 8px; }
+    .subtitle { color: var(--muted); margin-bottom: 32px; }
+    label { display: block; font-weight: 600; margin: 18px 0 8px; }
+    input:not([type="checkbox"]) {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      font: inherit;
+      background: var(--bg);
+      color: var(--text);
+    }
+    input:focus { outline: 1px solid var(--primary); }
+    .password-field { position: relative; }
+    .password-field input { padding-right: 78px; }
+    .show-btn {
+      position: absolute;
+      right: 10px;
+      top: 8px;
+      padding: 8px;
+      border: none;
+      background: transparent;
+      color: var(--primary);
+      cursor: pointer;
+    }
+    .options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin: 22px 0;
+      font-size: 13px;
+    }
+    .remember { display: flex; align-items: center; gap: 7px; }
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .submit-btn {
+      width: 100%;
+      border: none;
+      border-radius: 11px;
+      padding: 15px;
+      background: var(--primary);
+      color: white;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    .submit-btn:hover { filter: brightness(1.1); }
+    .message { min-height: 23px; margin-top: 15px; font-size: 14px; }
+    .footer { text-align: center; color: var(--muted); margin-top: 24px; }
+    @media (max-width: 800px) {
+      .layout { grid-template-columns: 1fr; }
+      .hero { min-height: 220px; padding: 30px; }
+      .hero h1 { font-size: 32px; margin: 15px 0 5px; }
+      .hero p { margin: 0; }
+      .orb { display: none; }
+      .form-side { padding: 25px 20px 45px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <section class="hero">
+      <div class="logo">✦ AuthSpace</div>
+      <div>
+        <h1>Tekrar hoş geldin.</h1>
+        <p>
+          Kaldığın yerden devam et. Dijital alanın
+          ve yeni deneyimlerin seni bekliyor.
+        </p>
+      </div>
+      <div>✧ Your space. Your identity.</div>
+      <div class="orb"></div>
+    </section>
+
+    <section class="form-side">
+      <div class="form-wrap">
+        <div class="top-actions">
+          <button id="themeBtn" class="theme-btn" type="button">
+            ☾ Tema değiştir
+          </button>
+        </div>
+
+        <h2>Giriş yap</h2>
+        <p class="subtitle">
+          AuthSpace hesabına güvenle eriş.
+        </p>
+
+        <form id="loginForm">
+          <label for="email">E-posta adresi</label>
+          <input
+            id="email"
+            type="email"
+            placeholder="ornek@email.com"
+            autocomplete="email"
+            required
+          >
+
+          <label for="password">Şifre</label>
+          <div class="password-field">
+            <input
+              id="password"
+              type="password"
+              placeholder="Şifreni gir"
+              autocomplete="current-password"
+              required
+            >
+            <button id="showPassword" class="show-btn" type="button">
+              Göster
+            </button>
+          </div>
+
+          <div class="options">
+            <label class="remember">
+              <input id="remember" type="checkbox">
+              Beni hatırla
+            </label>
+            <a href="forgot-password.html">Şifremi unuttum</a>
+          </div>
+
+          <button class="submit-btn" type="submit">
+            Giriş yap →
+          </button>
+
+          <div id="message" class="message" role="status"></div>
+        </form>
+
+        <p class="footer">
+          Henüz hesabın yok mu?
+          <a href="register.html">Hesap oluştur</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById("loginForm");
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
+    const message = document.getElementById("message");
+
+    document.getElementById("themeBtn").addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+    });
+
+    document.getElementById("showPassword").addEventListener("click", e => {
+      password.type = password.type === "password" ? "text" : "password";
+      e.target.textContent =
+        password.type === "password" ? "Göster" : "Gizle";
+    });
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      message.style.color = "#ef4444";
+
+      if (!email.validity.valid) {
+        message.textContent = "Geçerli bir e-posta adresi gir.";
+        return;
+      }
+      if (!password.value.trim()) {
+        message.textContent = "Şifre alanı boş bırakılamaz.";
+        return;
+      }
+
+      message.style.color = "#22a66a";
+      message.textContent =
+        "Form doğrulandı. Gerçek giriş işlemi API bağlanınca aktif olacak.";
+    });
+  </script>
+</body>
+</html>
