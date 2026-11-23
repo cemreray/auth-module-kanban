@@ -1,0 +1,301 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuthSpace | Hesap Oluştur</title>
+  <style>
+    :root {
+      --bg: #f4f6fc;
+      --panel: #ffffff;
+      --text: #182038;
+      --muted: #69748b;
+      --border: #dce2ee;
+      --primary: #6758e8;
+    }
+    body.dark {
+      --bg: #101321;
+      --panel: #1a1e30;
+      --text: #f4f5ff;
+      --muted: #a1aac1;
+      --border: #343a50;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .layout {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .hero {
+      background: linear-gradient(145deg, #302275, #6652da, #a264cf);
+      padding: 65px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+    }
+    .logo { font-size: 23px; font-weight: 800; letter-spacing: -.5px; }
+    .hero h1 {
+      font-size: clamp(36px, 4vw, 62px);
+      line-height: 1.12;
+      max-width: 500px;
+      letter-spacing: -2px;
+    }
+    .hero p { color: #e5ddff; line-height: 1.8; max-width: 420px; }
+    .orb {
+      width: 280px;
+      height: 280px;
+      border: 1px solid #ffffff65;
+      border-radius: 50%;
+      position: absolute;
+      right: -80px;
+      bottom: 12%;
+      box-shadow: 0 0 0 45px #ffffff0c, 0 0 0 90px #ffffff0a;
+      pointer-events: none;
+    }
+    .form-side {
+      padding: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--panel);
+    }
+    .form-wrap { width: 100%; max-width: 410px; }
+    .top-actions { display: flex; justify-content: flex-end; }
+    .theme-btn {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      padding: 9px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    h2 { font-size: 32px; margin: 20px 0 8px; }
+    .subtitle { color: var(--muted); margin-bottom: 30px; }
+    label { display: block; font-weight: 600; margin: 16px 0 8px; font-size: 14px; }
+    input:not([type="checkbox"]) {
+      width: 100%;
+      padding: 14px 15px;
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      outline: none;
+      font: inherit;
+    }
+    input:focus { border-color: var(--primary); }
+    .password-field { display: flex; position: relative; }
+    .password-field input { padding-right: 75px; }
+    .show-btn {
+      position: absolute;
+      right: 8px;
+      top: 6px;
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      padding: 9px;
+      cursor: pointer;
+    }
+    .strength-track {
+      height: 6px;
+      background: var(--border);
+      border-radius: 8px;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+    .strength-fill { width: 0; height: 100%; transition: .25s; }
+    .hint { color: var(--muted); font-size: 12px; margin-top: 7px; }
+    .terms {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin: 22px 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+    .terms input { margin-top: 3px; }
+    .submit-btn {
+      width: 100%;
+      background: var(--primary);
+      border: none;
+      padding: 15px;
+      color: white;
+      border-radius: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    .submit-btn:hover { filter: brightness(1.1); }
+    .message { margin-top: 15px; font-size: 14px; min-height: 20px; }
+    .bottom-link { text-align: center; margin-top: 24px; color: var(--muted); }
+    a { color: var(--primary); }
+    @media (max-width: 800px) {
+      .layout { grid-template-columns: 1fr; }
+      .hero { min-height: 220px; padding: 30px; }
+      .hero h1 { font-size: 30px; margin: 18px 0 5px; }
+      .hero p { margin: 0; }
+      .orb { display: none; }
+      .form-side { padding: 25px 20px 45px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <section class="hero">
+      <div class="logo">✦ AuthSpace</div>
+      <div>
+        <h1>Yeni bir başlangıç, tek bir hesap.</h1>
+        <p>
+          Dijital alanına hoş geldin. Güvenli, sade ve
+          sana özel bir deneyim oluştur.
+        </p>
+      </div>
+      <div>✧ Your space. Your identity.</div>
+      <div class="orb"></div>
+    </section>
+
+    <section class="form-side">
+      <div class="form-wrap">
+        <div class="top-actions">
+          <button class="theme-btn" id="themeBtn" type="button">
+            ☾ Tema değiştir
+          </button>
+        </div>
+
+        <h2>Hesap oluştur</h2>
+        <p class="subtitle">Birkaç adımda aramıza katıl.</p>
+
+        <form id="registerForm">
+          <label for="fullName">Ad Soyad</label>
+          <input id="fullName" type="text"
+                 placeholder="Adın ve soyadın"
+                 autocomplete="name" required minlength="2">
+
+          <label for="email">E-posta adresi</label>
+          <input id="email" type="email"
+                 placeholder="ornek@email.com"
+                 autocomplete="email" required>
+
+          <label for="password">Şifre</label>
+          <div class="password-field">
+            <input id="password" type="password"
+                   placeholder="Güçlü bir şifre oluştur"
+                   autocomplete="new-password" required>
+            <button class="show-btn" type="button"
+                    data-target="password">Göster</button>
+          </div>
+          <div class="strength-track">
+            <div id="strengthFill" class="strength-fill"></div>
+          </div>
+          <div id="strengthText" class="hint">
+            En az 8 karakter, büyük/küçük harf, sayı ve sembol kullan.
+          </div>
+
+          <label for="confirmPassword">Şifre Tekrarı</label>
+          <div class="password-field">
+            <input id="confirmPassword" type="password"
+                   placeholder="Şifreni tekrar yaz"
+                   autocomplete="new-password" required>
+            <button class="show-btn" type="button"
+                    data-target="confirmPassword">Göster</button>
+          </div>
+
+          <label class="terms">
+            <input id="terms" type="checkbox" required>
+            <span>Kayıt için gerekli koşulları okudum ve kabul ediyorum.</span>
+          </label>
+
+          <button class="submit-btn" type="submit">
+            Hesabımı oluştur →
+          </button>
+          <div id="message" class="message" role="status"></div>
+        </form>
+
+        <p class="bottom-link">
+          Zaten hesabın var mı?
+          <a href="login.html">Giriş yap</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById("registerForm");
+    const password = document.getElementById("password");
+    const confirmPassword = document.getElementById("confirmPassword");
+    const message = document.getElementById("message");
+    const strengthFill = document.getElementById("strengthFill");
+    const strengthText = document.getElementById("strengthText");
+
+    document.getElementById("themeBtn").addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+    });
+
+    document.querySelectorAll(".show-btn").forEach(button => {
+      button.addEventListener("click", () => {
+        const input = document.getElementById(button.dataset.target);
+        input.type = input.type === "password" ? "text" : "password";
+        button.textContent = input.type === "password" ? "Göster" : "Gizle";
+      });
+    });
+
+    function passwordChecks(value) {
+      return [
+        value.length >= 8,
+        /[a-z]/.test(value),
+        /[A-Z]/.test(value),
+        /[0-9]/.test(value),
+        /[^a-zA-Z0-9]/.test(value)
+      ];
+    }
+
+    password.addEventListener("input", () => {
+      const value = password.value;
+      const score = passwordChecks(value).filter(Boolean).length;
+      const colors = ["#ef4444", "#ef4444", "#f59e0b",
+                      "#f59e0b", "#22c55e", "#16a34a"];
+
+      strengthFill.style.width = value ? (score * 20) + "%" : "0%";
+      strengthFill.style.background = colors[score];
+
+      strengthText.textContent = !value
+        ? "En az 8 karakter, büyük/küçük harf, sayı ve sembol kullan."
+        : score <= 2 ? "Zayıf şifre"
+        : score <= 4 ? "Orta güçte şifre"
+        : "Güçlü şifre";
+    });
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      message.style.color = "#ef4444";
+
+      if (!passwordChecks(password.value).every(Boolean)) {
+        message.textContent = "Şifren tüm güvenlik koşullarını karşılamalı.";
+        return;
+      }
+      if (password.value !== confirmPassword.value) {
+        message.textContent = "Şifreler eşleşmiyor.";
+        return;
+      }
+      if (!document.getElementById("terms").checked) {
+        message.textContent = "Devam etmek için koşulları kabul etmelisin.";
+        return;
+      }
+
+      message.style.color = "#22a66a";
+      message.textContent =
+        "Form doğrulandı! Gerçek kayıt işlemi API bağlanınca aktif olacak.";
+    });
+  </script>
+</body>
+</html>
